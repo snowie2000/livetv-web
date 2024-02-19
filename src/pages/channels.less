@@ -1,0 +1,33 @@
+.container {
+  padding: 0 40px;
+  transition: padding 0.2s ease;
+
+  @media screen and (max-width: 800px) {
+    padding: 0 10px;
+  }
+}
+
+html {
+  background-color: white;
+}
+
+.title {
+  small {
+    color: #777;
+
+    @media screen and (max-width: 800px) {
+      display: none;
+    }
+  }
+}
+
+.playlist {
+  width: 500px;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.toolbar {
+  display: flex;
+  justify-content: space-between;
+}
