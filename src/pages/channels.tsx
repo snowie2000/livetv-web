@@ -59,6 +59,7 @@ function transformReq(ci: ChannelInfo) {
     url: ci.URL,
     name: ci.Name,
     proxy: ci.Proxy,
+    parser: ci.Parser
   }
 }
 
@@ -118,6 +119,7 @@ export default function Channels() {
     }).then(res => {
       const list = JSON.parse(res.data) as ChannelInfo[]
       if (Array.isArray(list) && list.length) {
+        list.forEach(ch=>ch.Parser = ch.Parser || "youtube")
         setPlayListUrl(list.shift()!.M3U8)
       }
       return list ?? []
