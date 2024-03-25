@@ -22,7 +22,10 @@ const _columns: ColumnsType<any> = [{
   dataIndex: "Name"
 }, {
   title: "Live",
-  dataIndex: "URL"
+  dataIndex: "URL",
+  render(value) {
+    return <span className={styles.liveUrl}>{value}</span>
+  }
 }, {
   title: "M3U8",
   dataIndex: "M3U8",
@@ -39,7 +42,9 @@ const _columns: ColumnsType<any> = [{
       <Tooltip title={<>{record.Message}<br />{record.LastUpdate}</>}>
         {Icons[record.Status]}
       </Tooltip>
-      {value}
+      <span className={styles.m3u8}>
+        {value}
+      </span>
     </Space>
   },
 }, {
