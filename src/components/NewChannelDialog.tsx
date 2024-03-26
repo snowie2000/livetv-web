@@ -49,6 +49,7 @@ export default function NewChannelDialog(props: dlgProps) {
   useEffect(() => {
     if (props.visible) {
       form?.resetFields()
+      form?.setFieldValue("Parser", "youtube")
       if (props.mode === "edit") {
         form?.setFieldsValue(props.channel)
       }
@@ -75,7 +76,7 @@ export default function NewChannelDialog(props: dlgProps) {
             <Input placeholder="URL" allowClear />
           </Form.Item>
           <Form.Item label="Parser" name="Parser" rules={[{ required: true }]}>
-            <Select placeholder="URL" options={parsers} defaultValue="youtube" />
+            <Select placeholder="URL" options={parsers} />
           </Form.Item>
           <Form.Item label="Proxy stream" name="Proxy" valuePropName="checked">
             <Checkbox />
