@@ -7,5 +7,5 @@ export default defineConfig({
     { path: "/channels", component: "channels"}
   ],
   npmClient: 'yarn',
-  favicons: ["favicon.png"]
+  favicons: ["favicon.png","favicon.ico"]
 });
