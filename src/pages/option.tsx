@@ -6,7 +6,7 @@ import { useMutation, useQuery } from 'react-query';
 import { api } from '@/modules/axios.config';
 import { history } from 'umi';
 import { defaultQueryClient } from '@/components/ReactQueryClientProvider';
-import { ThunderboltOutlined } from '@ant-design/icons';
+import { BulbOutlined, ThunderboltOutlined } from '@ant-design/icons';
 
 interface optProps {
   visible: boolean
@@ -20,6 +20,11 @@ export default function Option(props: optProps) {
 
   function handleAutoFillHost() {
     cfgForm.setFieldValue("baseurl", window.location.origin)
+  }
+
+  function handleRandomizeSecret() {
+    const secret = Math.random().toString(36).substring(2)
+    cfgForm.setFieldValue("secret", secret)
   }
 
   const ConfigMgr = () => <Form labelCol={{ span: 6 }} form={cfgForm}>
@@ -37,6 +42,13 @@ export default function Option(props: optProps) {
           </Tooltip>
         }
       />
+    </Form.Item>
+    <Form.Item name="secret" label="Server secret">
+      <Input suffix={
+          <Tooltip title="Randonmize">
+            <BulbOutlined  onClick={handleRandomizeSecret} />
+          </Tooltip>
+        }/>
     </Form.Item>
     <Form.Item name="apikey" label="Data API">
       <Input />
