@@ -45,7 +45,7 @@ export default function Option(props: optProps) {
     </Form.Item>
     <Form.Item name="secret" label="Server secret">
       <Input suffix={
-          <Tooltip title="Randonmize">
+          <Tooltip title="Randomize">
             <BulbOutlined  onClick={handleRandomizeSecret} />
           </Tooltip>
         }/>
