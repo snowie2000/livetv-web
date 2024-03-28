@@ -4,6 +4,7 @@ import { useEffect, useState } from "react"
 import { useQuery } from "react-query"
 
 export interface ChannelInfo {
+  No: number
   ID: string
   URL: string
   Name: string
