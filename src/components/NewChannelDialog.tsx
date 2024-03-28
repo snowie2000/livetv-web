@@ -24,11 +24,6 @@ interface dlgProps {
   onCancel: () => void
 }
 
-interface Parser {
-  label: string
-  value: string
-}
-
 export default function NewChannelDialog(props: dlgProps) {
   const [form] = Form.useForm()
   const [busy, setBusy] = useState(false)
