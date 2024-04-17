@@ -35,7 +35,7 @@ export default function Option(props: optProps) {
       <Form.Item name="args" label="yt-dlp Args" rules={[{ required: true }]}>
         <Input placeholder="--extractor-args youtube:skip=dash -f b -g {url}" />
       </Form.Item>
-      <Form.Item name="baseurl" label="Baseurl" rules={[{ required: true }]}>
+      <Form.Item name="baseurl" label="BaseUrl" rules={[{ required: true }]}>
         <Input
           placeholder={window.location.origin}
           suffix={
@@ -43,6 +43,11 @@ export default function Option(props: optProps) {
               <ThunderboltOutlined onClick={handleAutoFillHost} />
             </Tooltip>
           }
+        />
+      </Form.Item>
+      <Form.Item name="proxyurl" label="ProxyUrl">
+        <Input
+          placeholder="leave empty to use baseUrl as proxy"
         />
       </Form.Item>
       <Form.Item name="secret" label="Server secret">
