@@ -11,6 +11,7 @@ export interface ChannelInfo {
   Parser: string
   M3U8: string
   Proxy: boolean
+  ProxyUrl: string
   LastUpdate: string
   Status: number
   Message: string
@@ -27,6 +28,7 @@ interface dlgProps {
 export default function NewChannelDialog(props: dlgProps) {
   const [form] = Form.useForm()
   const [busy, setBusy] = useState(false)
+  const [needProxy, setNeedProxy] = useState(false)
 
   const { data: parsers } = useQuery("parsers", () =>
     api.get("/plugins").then((res) => JSON.parse(res.data).map((p: string) => ({ label: p, value: p })))
@@ -35,22 +37,36 @@ export default function NewChannelDialog(props: dlgProps) {
   function handleSubmit() {
     form?.validateFields().then((values) => {
       setBusy(true)
-      props.onAdd(values).finally(() => {
-        setBusy(false)
-      })
+      props
+        .onAdd({
+          ...values,
+          ProxyUrl: values.UseProxy ? values.ProxyUrl : "",
+        })
+        .finally(() => {
+          setBusy(false)
+        })
     })
   }
 
   // reset form on show
   useEffect(() => {
     if (props.visible) {
+      setNeedProxy(false)
       form?.resetFields()
       form?.setFieldValue("Parser", "youtube")
       if (props.mode === "edit") {
-        form?.setFieldsValue(props.channel)
+        form?.setFieldsValue({
+          ...props.channel,
+          UseProxy: !!props.channel!.ProxyUrl,
+        })
+        setNeedProxy(!!props.channel!.ProxyUrl)
       }
     }
   }, [props.visible])
+
+  function handleValuesChange(_: any, { UseProxy }: any) {
+    setNeedProxy(!!UseProxy)
+  }
 
   return (
     <Modal
@@ -63,7 +79,7 @@ export default function NewChannelDialog(props: dlgProps) {
       title={props.mode === "add" ? "New Channel" : "Edit Channel"}
     >
       <div style={{ marginTop: 20 }}>
-        <Form labelCol={{ span: 6 }} form={form}>
+        <Form labelCol={{ span: 6 }} form={form} onValuesChange={handleValuesChange}>
           <Form.Item name="ID" hidden />
           <Form.Item label="Channel Name" name="Name" rules={[{ required: true }]}>
             <Input placeholder="Channel name" allowClear />
@@ -76,6 +92,12 @@ export default function NewChannelDialog(props: dlgProps) {
           </Form.Item>
           <Form.Item label="Proxy stream" name="Proxy" valuePropName="checked">
             <Checkbox />
+          </Form.Item>
+          <Form.Item label="Use Proxy" name="UseProxy" valuePropName="checked">
+            <Checkbox />
+          </Form.Item>
+          <Form.Item label="Proxy string" name="ProxyUrl" hidden={!needProxy}>
+            <Input placeholder="socks5://user:password@example.com:443" />
           </Form.Item>
         </Form>
       </div>

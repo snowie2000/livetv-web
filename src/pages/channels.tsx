@@ -1,6 +1,6 @@
-import React, { useCallback, useEffect, useMemo, useState } from "react"
+import { useCallback, useEffect, useMemo, useState } from "react"
 import styles from "./channels.less"
-import { Button, Card, Input, Modal, Space, Table, Tooltip, message } from "antd"
+import { Button, Input, Modal, Space, Table, Tooltip, message } from "antd"
 import {
   CheckCircleFilled,
   CheckOutlined,
@@ -10,6 +10,7 @@ import {
   EditOutlined,
   MenuOutlined,
   QuestionCircleFilled,
+  SafetyOutlined,
   SettingOutlined,
   WarningFilled,
 } from "@ant-design/icons"
@@ -19,7 +20,6 @@ import NewChannelDialog, { ChannelInfo } from "@/components/NewChannelDialog"
 import { useMutation, useQuery } from "react-query"
 import { api } from "@/modules/axios.config"
 import { defaultQueryClient } from "@/components/ReactQueryClientProvider"
-import { history } from "umi"
 import { AxiosResponse } from "axios"
 import Option from "./option"
 
@@ -75,7 +75,12 @@ const _columns: ColumnsType<any> = [
     title: "Proxy",
     width: 80,
     render(dom, rec) {
-      return rec.Proxy ? <CheckOutlined /> : ""
+      return (
+        <Space>
+          {rec.Proxy && <CheckOutlined title="Stream proxied" />}
+          {!!rec.ProxyUrl && <SafetyOutlined  title="Connect via proxy" />}
+        </Space>
+      )
     },
   },
   {
@@ -91,6 +96,7 @@ function transformReq(ci: ChannelInfo) {
     name: ci.Name,
     proxy: ci.Proxy,
     parser: ci.Parser,
+    proxyurl: ci.ProxyUrl,
   }
 }
 
