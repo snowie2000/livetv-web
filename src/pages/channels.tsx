@@ -97,6 +97,7 @@ function transformReq(ci: ChannelInfo) {
     proxy: ci.Proxy,
     parser: ci.Parser,
     proxyurl: ci.ProxyUrl,
+    tsproxy: ci.TsProxy,
   }
 }
 
@@ -174,7 +175,7 @@ export default function Channels() {
           return list ?? []
         }),
     {
-      refetchInterval: 30000,
+      refetchInterval: 15000,
       refetchOnWindowFocus: true,
     }
   )

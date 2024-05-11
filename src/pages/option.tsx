@@ -45,11 +45,6 @@ export default function Option(props: optProps) {
           }
         />
       </Form.Item>
-      <Form.Item name="proxyurl" label="ProxyUrl">
-        <Input
-          placeholder="leave empty to use baseUrl as proxy"
-        />
-      </Form.Item>
       <Form.Item name="secret" label="Server secret">
         <Input
           suffix={

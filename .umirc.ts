@@ -1,3 +1,4 @@
+import proxy from "./config/proxy"
 import { defineConfig } from "umi";
 
 export default defineConfig({
@@ -7,5 +8,6 @@ export default defineConfig({
     { path: "/channels", component: "channels"}
   ],
   npmClient: 'yarn',
+  proxy: proxy.dev,
   favicons: ["favicon.png","favicon.ico"]
 });
