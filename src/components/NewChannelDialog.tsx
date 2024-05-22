@@ -44,7 +44,7 @@ export default function NewChannelDialog(props: dlgProps) {
       props
         .onAdd({
           ...values,
-          Proxy: values.Proxy !== "0",
+          Proxy: values.Proxy && values.Proxy !== "0",
           TsProxy: values.Proxy === "2" ? customTsProxy : "",
           ProxyUrl: values.UseProxy ? values.ProxyUrl : "",
         })
