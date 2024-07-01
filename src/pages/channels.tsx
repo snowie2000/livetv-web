@@ -240,7 +240,7 @@ export default function Channels() {
     <div className={styles.container}>
       <h1 className={styles.title}>
         <Space>
-          LiveTV! <small>Use Youtube live as IPTV feeds</small>
+          LiveTV! <small>IPTV feeds on your hand</small>
           <SettingOutlined style={{ fontSize: "16px" }} onClick={() => setOptionShow(true)} />
         </Space>
       </h1>

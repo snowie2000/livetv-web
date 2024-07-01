@@ -74,7 +74,7 @@ export default function Option(props: optProps) {
   const About = () => (
     <div>
       <div>
-        <a href="https://github.com/zjyl1994/livetv">LiveTV!</a> by <a href="https://github.com/zjyl1994">zjyl1994.</a>
+        Based on <a href="https://github.com/zjyl1994/livetv">LiveTV!</a> by <a href="https://github.com/zjyl1994">zjyl1994.</a>
       </div>
       <div>
         Forked by <a href="https://github.com/snowie2000">snowie2000</a>
