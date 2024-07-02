@@ -1,8 +1,10 @@
 import { api } from "@/modules/axios.config"
-import { Checkbox, Form, Input, InputRef, Modal, Select, Space } from "antd"
-import { useEffect, useRef, useState } from "react"
+import { AutoComplete, Checkbox, Form, Input, InputRef, Modal, Select, Space } from "antd"
+import { useEffect, useMemo, useRef, useState } from "react"
 import { useQuery } from "react-query"
 import styles from "./NewChannelDialog.less"
+import { BaseOptionType } from "antd/es/select"
+import { defaultQueryClient } from "./ReactQueryClientProvider"
 
 export interface ChannelInfo {
   No: number
@@ -17,6 +19,7 @@ export interface ChannelInfo {
   LastUpdate: string
   Status: number
   Message: string
+  Category: string
 }
 
 interface dlgProps {
@@ -34,9 +37,19 @@ export default function NewChannelDialog(props: dlgProps) {
   const { Option } = Select
   const inputRef = useRef<InputRef>(null)
   const [customTsProxy, setCustomTsProxy] = useState("")
+  const [categoryVal, setCategoryVal] = useState<string>("")
   const { data: parsers } = useQuery("parsers", () =>
     api.get("/plugins").then((res) => JSON.parse(res.data).map((p: string) => ({ label: p, value: p })))
   )
+  const { data: CategoryList } = useQuery<BaseOptionType[]>("category", () =>
+    api.get("/category").then((res) => JSON.parse(res.data).map((p: string) => ({ value: p })))
+  )
+
+  const filteredCategory = useMemo(() => {
+    const value = categoryVal.trim()
+    if (!value) return CategoryList
+    return CategoryList?.filter((c: any) => c.value.includes(value)) ?? []
+  }, [CategoryList, categoryVal])
 
   function handleSubmit() {
     form?.validateFields().then((values) => {
@@ -48,6 +61,12 @@ export default function NewChannelDialog(props: dlgProps) {
           TsProxy: values.Proxy === "2" ? customTsProxy : "",
           ProxyUrl: values.UseProxy ? values.ProxyUrl : "",
         })
+        .then(() => {
+          // update category list if a new category is added
+          if (categoryVal && !CategoryList?.find((v) => v.value === categoryVal)) {
+            defaultQueryClient.invalidateQueries("category")
+          }
+        })
         .finally(() => {
           setBusy(false)
         })
@@ -58,12 +77,13 @@ export default function NewChannelDialog(props: dlgProps) {
   useEffect(() => {
     if (props.visible) {
       setNeedProxy(false)
+      setCategoryVal("")
       form?.resetFields()
       form?.setFieldValue("Parser", "youtube")
       if (props.mode === "edit") {
         form?.setFieldsValue({
           ...props.channel,
-          Proxy: props.channel!.Proxy ? (props.channel!.TsProxy ? "2" :"1") : "0",
+          Proxy: props.channel!.Proxy ? (props.channel!.TsProxy ? "2" : "1") : "0",
           UseProxy: !!props.channel!.ProxyUrl,
         })
         setNeedProxy(!!props.channel!.ProxyUrl)
@@ -98,6 +118,13 @@ export default function NewChannelDialog(props: dlgProps) {
           <Form.Item label="Parser" name="Parser" rules={[{ required: true }]}>
             <Select placeholder="URL" options={parsers} />
           </Form.Item>
+          <Form.Item label="Category" name="Category">
+            <AutoComplete
+              placeholder="Select or type new category names"
+              options={filteredCategory}
+              onSearch={setCategoryVal}
+            />
+          </Form.Item>
           <Form.Item label="Proxy stream" name="Proxy">
             <Select optionLabelProp="title" defaultValue={"0"}>
               <Option value="0" title="No proxy">
@@ -115,7 +142,7 @@ export default function NewChannelDialog(props: dlgProps) {
                       e.stopPropagation()
                       inputRef.current?.focus()
                     }}
-                    onDoubleClick={()=>{
+                    onDoubleClick={() => {
                       inputRef.current?.select()
                     }}
                     placeholder="https://example.com"

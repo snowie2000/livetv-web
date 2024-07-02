@@ -98,6 +98,7 @@ function transformReq(ci: ChannelInfo) {
     parser: ci.Parser,
     proxyurl: ci.ProxyUrl,
     tsproxy: ci.TsProxy,
+    category: ci.Category
   }
 }
 
