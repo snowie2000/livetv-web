@@ -94,11 +94,16 @@ export default function Login() {
               <WithProps
                 content={(props: any) => (
                   <div style={{ position: "relative" }}>
-                    <img src={captchaInfo?.data} className={styles.captcha} alt="captcha image" />
-                    <Input className={styles.answer} maxLength={4} {...props} />
+                    <Input
+                      className={styles.answer}
+                      maxLength={4}
+                      placeholder="Captcha"
+                      {...props}
+                      suffix={<img src={captchaInfo?.data} className={styles.captcha} alt="captcha image" onClick={loadOTP} />}
+                    />
                     <div className={styles.btnSubmit}>
                       <Button loading={doSubmit.isLoading} type="primary" size="middle" htmlType="submit">
-                        Login
+                        LOGIN
                       </Button>
                     </div>
                   </div>

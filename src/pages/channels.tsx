@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from "react"
 import styles from "./channels.less"
-import { Button, Input, Modal, Space, Table, Tooltip, message } from "antd"
+import { Button, Input, Modal, Select, Space, Table, Tooltip, message } from "antd"
 import {
   CheckCircleFilled,
   CheckOutlined,
@@ -8,6 +8,7 @@ import {
   CopyOutlined,
   DeleteOutlined,
   EditOutlined,
+  EyeOutlined,
   MenuOutlined,
   QuestionCircleFilled,
   SafetyOutlined,
@@ -78,7 +79,7 @@ const _columns: ColumnsType<any> = [
       return (
         <Space>
           {rec.Proxy && <CheckOutlined title="Stream proxied" />}
-          {!!rec.ProxyUrl && <SafetyOutlined  title="Connect via proxy" />}
+          {!!rec.ProxyUrl && <SafetyOutlined title="Connect via proxy" />}
         </Space>
       )
     },
@@ -86,6 +87,17 @@ const _columns: ColumnsType<any> = [
   {
     title: <MenuOutlined />,
     width: 80,
+  },
+]
+
+const playlistTypes = [
+  {
+    label: "M3U",
+    value: "lives.m3u",
+  },
+  {
+    label: "TXT",
+    value: "lives.txt",
   },
 ]
 
@@ -98,16 +110,17 @@ function transformReq(ci: ChannelInfo) {
     parser: ci.Parser,
     proxyurl: ci.ProxyUrl,
     tsproxy: ci.TsProxy,
-    category: ci.Category
+    category: ci.Category,
   }
 }
 
 export default function Channels() {
   const [dialogShow, setDialogShow] = useState(false)
   const [optionShow, setOptionShow] = useState(false)
-  const [dialogMode, setDialogMode] = useState<"add" | "edit">("add")
+  const [dialogMode, setDialogMode] = useState<"add" | "edit" | "view">("add")
   const [playlistUrl, setPlayListUrl] = useState("")
   const [copied, setCopied] = useState(false)
+  const [playlistType, setPlaylistType] = useState("lives.m3u")
   const [editingChannel, setEditingChannel] = useState<ChannelInfo>()
 
   useEffect(() => {
@@ -168,7 +181,7 @@ export default function Channels() {
           const list = JSON.parse(res.data) as ChannelInfo[]
           if (Array.isArray(list) && list.length) {
             list.forEach((ch, idx) => {
-              ch.Parser = ch.Parser || "youtube"
+              ch.Parser = ch.Parser || "http"
               ch.No = idx
             })
             setPlayListUrl(list.shift()!.M3U8)
@@ -180,6 +193,10 @@ export default function Channels() {
       refetchOnWindowFocus: true,
     }
   )
+
+  const displayPlaylistUrl = useMemo(() => {
+    return playlistUrl.replace("lives.m3u", playlistType)
+  }, [playlistType, playlistUrl])
 
   function handleAddChannel() {
     setDialogMode("add")
@@ -194,7 +211,7 @@ export default function Channels() {
   // copy m3u8 playlist to clipboard
   function handleCopy() {
     navigator.clipboard
-      .writeText(playlistUrl)
+      .writeText(displayPlaylistUrl)
       .then(() => {
         setCopied(true)
         setTimeout(() => {
@@ -209,6 +226,12 @@ export default function Channels() {
   const handleEditChannel = useCallback((ch: ChannelInfo) => {
     setEditingChannel(ch)
     setDialogMode("edit")
+    setDialogShow(true)
+  }, [])
+
+  const handleViewChannel = useCallback((ch: ChannelInfo) => {
+    setEditingChannel(ch)
+    setDialogMode("view")
     setDialogShow(true)
   }, [])
 
@@ -227,7 +250,9 @@ export default function Channels() {
 
   const columns = useMemo(() => {
     _columns[_columns.length - 1].render = (dom, entity) => {
-      return (
+      return entity.Virtual ? (
+        <EyeOutlined onClick={() => handleViewChannel(entity)} />
+      ) : (
         <Space>
           <EditOutlined onClick={() => handleEditChannel(entity)} />
           <DeleteOutlined onClick={() => handleDeleteChannel(entity)} />
@@ -249,7 +274,8 @@ export default function Channels() {
         <div className={classNames([styles.playlist, "flex"])}>
           <span>Playlist:&nbsp;&nbsp;</span>
           <Space.Compact style={{ flex: "1 1 99%" }}>
-            <Input value={playlistUrl} readOnly />
+            <Select defaultValue="lives.m3u" value={playlistType} onChange={setPlaylistType} options={playlistTypes} />
+            <Input value={displayPlaylistUrl} readOnly />
             <Tooltip title={copied ? "Copied" : "Click to copy"}>
               <Button icon={<CopyOutlined />} onClick={handleCopy} />
             </Tooltip>
