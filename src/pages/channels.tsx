@@ -107,6 +107,7 @@ export default function Channels() {
   const [dialogMode, setDialogMode] = useState<"add" | "edit">("add")
   const [playlistUrl, setPlayListUrl] = useState("")
   const [copied, setCopied] = useState(false)
+  const [refreshInterval, setRefreshInterval] = useState(15000)
   const [editingChannel, setEditingChannel] = useState<ChannelInfo>()
 
   useEffect(() => {
@@ -164,19 +165,23 @@ export default function Channels() {
           responseType: "json",
         })
         .then((res) => {
+          setRefreshInterval(15000)
           const list = JSON.parse(res.data) as ChannelInfo[]
           if (Array.isArray(list) && list.length) {
             list.forEach((ch, idx) => {
               ch.Parser = ch.Parser || "youtube"
               ch.No = idx
+              if (ch.Status === 0) {  // unparsed channel exists, refresh more frequently
+                setRefreshInterval(1000)
+              }
             })
             setPlayListUrl(list.shift()!.M3U8)
           }
           return list ?? []
         }),
     {
-      refetchInterval: 15000,
-      refetchOnWindowFocus: true,
+      refetchInterval: refreshInterval,
+      refetchOnWindowFocus: false,
     }
   )
 
