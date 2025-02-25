@@ -1,8 +1,21 @@
-.TsProxySelector {
-  display: flex;
-  align-items: center;
+.NewChannelDialog {
+  .TsProxySelector {
+    display: flex;
+    align-items: center;
 
-  span {
-    margin-right: 3px;
+    span {
+      margin-right: 3px;
+    }
+  }
+
+  fieldset {
+    border: none;
+  }
+
+  :global(.ant-select-disabled) {
+    span,
+    input {
+      color: rgba(0,0,0,0.7) !important;
+    }
   }
 }
